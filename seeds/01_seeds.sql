@@ -17,6 +17,7 @@ VALUES (
   );
 
 INSERT INTO properties (
+  id,
   owner_id,
   title,
   description,
@@ -35,6 +36,7 @@ INSERT INTO properties (
   )
   VALUES (
     1,
+    1,
     'Speed lamp',
     'description',
     'https://images.pexels.com/photos/2086676/pexels-photo-2086676.jpeg?auto=compress&cs=tinysrgb&h=350',
@@ -50,6 +52,7 @@ INSERT INTO properties (
     '28142',
     TRUE
   ),(
+    2,
     1,
     'Blank corner',
     'description',
@@ -62,10 +65,11 @@ INSERT INTO properties (
     'Canada',
     '651 Nami Road',
     'Bohbatev',
-    'Alberta'
+    'Alberta',
     '83680',
     TRUE
   ),(
+    3,
     2,
     'Habit mix',
     'description',
