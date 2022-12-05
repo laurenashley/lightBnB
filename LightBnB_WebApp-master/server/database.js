@@ -100,7 +100,7 @@ exports.getAllReservations = getAllReservations;
  * @param {*} limit The number of results to return.
  * @return {Promise<[{}]>}  A promise to the properties.
  */
-const getAllProperties = function(options, limit = 10) {
+const getAllProperties = (options, limit = 10) => {
   const queryParams = [];
 
   let queryString = `
@@ -109,12 +109,9 @@ const getAllProperties = function(options, limit = 10) {
   JOIN property_reviews ON properties.id = property_id
   `;
 
-  const filters = [];
-  Object.values(options).forEach(filter => {
-    if (filter !== '') filters.push(filter);
-  });
-  const and = filters.length > 1 ? 'AND ' : '';
-  console.log('106 ', options);
+  const sqlClause = (params) => {
+    return params.length > 1 ? 'AND' : 'WHERE';
+  };
 
   if (options.city) {
     queryParams.push(`%${options.city}%`);
@@ -123,17 +120,22 @@ const getAllProperties = function(options, limit = 10) {
 
   if (options.owner_id) {
     queryParams.push(`%${options.owner_id}%`);
-    queryString += `${and}WHERE owner_id = $${queryParams.length} `;
+    queryString += `${sqlClause(queryParams)} owner_id = $${queryParams.length} `;
   }
 
   if (options.minimum_price_per_night) {
     queryParams.push(`${options.minimum_price_per_night}`);
-    queryString += `${and}WHERE cost_per_night >= $${queryParams.length} `;
+    queryString += `${sqlClause(queryParams)} cost_per_night >= $${queryParams.length} `;
   }
 
   if (options.maximum_price_per_night) {
     queryParams.push(`${options.maximum_price_per_night}`);
-    queryString += `${and}WHERE cost_per_night <= $${queryParams.length} `;
+    // if min also present, use BETWEEN
+    if (options.minimum_price_per_night) {
+      queryString += `${sqlClause(queryParams)} cost_per_night BETWEEN $${queryParams.length - 1} AND $${queryParams.length} `;
+    } else {
+      queryString += `${sqlClause(queryParams)} cost_per_night <= $${queryParams.length} `;
+    }
   }
 
   if (options.minimum_rating) {
@@ -142,6 +144,7 @@ const getAllProperties = function(options, limit = 10) {
   }
 
   queryParams.push(limit);
+  console.log('params, limit ', queryParams, limit);
   queryString += `
   GROUP BY properties.id
   ORDER BY cost_per_night
@@ -150,7 +153,10 @@ const getAllProperties = function(options, limit = 10) {
 
   console.log(queryString, queryParams);
 
-  return pool.query(queryString, queryParams).then((res) => res.rows);
+  return pool.query(queryString, queryParams).then((res) => res.rows)
+  .catch((err) => {
+    console.log(err.message);
+  });
 };
 exports.getAllProperties = getAllProperties;
 
