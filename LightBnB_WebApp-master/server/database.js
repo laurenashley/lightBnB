@@ -130,7 +130,7 @@ const getAllProperties = (options, limit = 10) => {
 
   if (options.maximum_price_per_night) {
     queryParams.push(`${options.maximum_price_per_night}`);
-    // if min also present, use BETWEEN
+    // if min price filter also present, use BETWEEN for range
     if (options.minimum_price_per_night) {
       queryString += `${sqlClause(queryParams)} cost_per_night BETWEEN $${queryParams.length - 1} AND $${queryParams.length} `;
     } else {
@@ -144,7 +144,6 @@ const getAllProperties = (options, limit = 10) => {
   }
 
   queryParams.push(limit);
-  console.log('params, limit ', queryParams, limit);
   queryString += `
   GROUP BY properties.id
   ORDER BY cost_per_night
