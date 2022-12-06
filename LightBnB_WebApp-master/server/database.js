@@ -124,13 +124,13 @@ const getAllProperties = (options, limit = 10) => {
   }
 
   if (options.minimum_price_per_night) {
-    // To Do convert price from cents to dollars
+    // To Do convert price from dollars to cents (in line 129)
     queryParams.push(`${options.minimum_price_per_night}`);
     queryString += `${sqlClause(queryParams)} cost_per_night >= $${queryParams.length} `;
   }
 
   if (options.maximum_price_per_night) {
-    // To Do convert price from cents to dollars
+    // To Do convert price from dollars to cents
     queryParams.push(`${options.maximum_price_per_night}`);
     // if min price filter also present, use BETWEEN for range
     if (options.minimum_price_per_night) {
