@@ -110,13 +110,9 @@ const getAllProperties = (options, limit = 10) => {
   JOIN property_reviews ON properties.id = property_id
   `;
 
-  const sqlClause = (params) => {
-    return params.length > 1 ? 'AND' : 'WHERE';
-  };
+  const sqlClause = params => params.length > 1 ? 'AND' : 'WHERE';
 
-  const dollarsToCents = (dollars) => {
-    return dollars * 100;
-  };
+  const dollarsToCents = dollars => dollars * 100;
 
   if (options.city) {
     queryParams.push(`%${options.city}%`);
@@ -146,9 +142,8 @@ const getAllProperties = (options, limit = 10) => {
   }
 
   if (options.minimum_rating) {
-    // To Do doesn't work due to GROUP BY issue
     queryParams.push(`${options.minimum_rating}`);
-    queryString += `WHERE property_reviews.rating >= $${queryParams.length} `;
+    queryString += `${sqlClause(queryParams)} property_reviews.rating >= $${queryParams.length} `;
   }
 
   queryParams.push(limit);
