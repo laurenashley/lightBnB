@@ -113,6 +113,10 @@ const getAllProperties = (options, limit = 10) => {
     return params.length > 1 ? 'AND' : 'WHERE';
   };
 
+  const dollarsToCents = (dollars) => {
+    return dollars * 100;
+  };
+
   if (options.city) {
     queryParams.push(`%${options.city}%`);
     queryString += `WHERE city LIKE $${queryParams.length} `;
@@ -124,14 +128,14 @@ const getAllProperties = (options, limit = 10) => {
   }
 
   if (options.minimum_price_per_night) {
-    // To Do convert price from dollars to cents (in line 129)
-    queryParams.push(`${options.minimum_price_per_night}`);
+    const minPrice = dollarsToCents(options.minimum_price_per_night);
+    queryParams.push(`${minPrice}`);
     queryString += `${sqlClause(queryParams)} cost_per_night >= $${queryParams.length} `;
   }
 
   if (options.maximum_price_per_night) {
-    // To Do convert price from dollars to cents
-    queryParams.push(`${options.maximum_price_per_night}`);
+    const maxPrice = dollarsToCents(options.maximum_price_per_night);
+    queryParams.push(`${maxPrice}`);
     // if min price filter also present, use BETWEEN for range
     if (options.minimum_price_per_night) {
       queryString += `${sqlClause(queryParams)} cost_per_night BETWEEN $${queryParams.length - 1} AND $${queryParams.length} `;
