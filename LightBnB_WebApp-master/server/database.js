@@ -148,7 +148,7 @@ const getAllProperties = (options, limit = 10) => {
   if (options.minimum_rating) {
     // To Do doesn't work due to GROUP BY issue
     queryParams.push(`${options.minimum_rating}`);
-    queryString += `HAVING avg(property_reviews.rating) <= $${queryParams.length} `;
+    queryString += `WHERE property_reviews.rating >= $${queryParams.length} `;
   }
 
   queryParams.push(limit);
