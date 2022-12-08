@@ -143,6 +143,7 @@ const getAllProperties = (options, limit = 10) => {
 
   if (options.minimum_rating) {
     queryParams.push(`${options.minimum_rating}`);
+    // To Do are we supposed to use aggregate here for ratings? Doesn't make sense to do so...
     queryString += `${sqlClause(queryParams)} property_reviews.rating >= $${queryParams.length} `;
   }
 
@@ -168,9 +169,31 @@ exports.getAllProperties = getAllProperties;
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+  console.log('properties ', property);
+  const queryParams = Object.keys(properties);
+  const propertyId = queryParams.length + 1;
+  let queryString = `INSERT INTO properties(
+                      title,
+                      description,
+                      number_of_bedrooms,
+                      number_of_bathrooms,
+                      parking_spaces,
+                      cost_per_night,
+                      thumbnail_photo_url,
+                      cover_photo_url,
+                      street,
+                      country,
+                      city,
+                      province,
+                      post_code,
+                      owner_id)
+                    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+                    RETURNING *;`;
+  // property.id = propertyId;
+  // properties[propertyId] = property;
+  return pool.query(queryString, queryParams).then((res) => res.rows)
+  .catch((err) => {
+    console.log(err.message);
+  });
 };
 exports.addProperty = addProperty;
