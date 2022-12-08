@@ -170,8 +170,8 @@ exports.getAllProperties = getAllProperties;
  */
 const addProperty = function(property) {
   console.log('properties ', property);
-  const queryParams = Object.keys(properties);
-  const propertyId = queryParams.length + 1;
+  const queryParams = Object.values(property);
+  console.log('params ', queryParams);
   let queryString = `INSERT INTO properties(
                       title,
                       description,
@@ -189,9 +189,10 @@ const addProperty = function(property) {
                       owner_id)
                     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
                     RETURNING *;`;
-  // property.id = propertyId;
-  // properties[propertyId] = property;
-  return pool.query(queryString, queryParams).then((res) => res.rows)
+  return pool.query(queryString, queryParams).then((res) => {
+    console.log('added row: ', res.rows[0]);
+    return res.rows[0];
+  })
   .catch((err) => {
     console.log(err.message);
   });
