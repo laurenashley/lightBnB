@@ -22,9 +22,13 @@ const users = require('./json/users.json');
  */
 const getUserWithEmail = function(email) {
   return pool
-    .query(`SELECT * FROM users WHERE email = $1`, [email])
+    .query(`SELECT * FROM users WHERE email = $1`, [`${email}`])
     .then((result) => {
-      return result.rows[0];
+      if (result.rows) {
+        return result.rows[0];
+      } else {
+        return null;
+      }
     })
     .catch((err) => {
       console.log(err.message);
@@ -104,11 +108,10 @@ exports.getAllReservations = getAllReservations;
 const getAllProperties = (options, limit = 10) => {
   const queryParams = [];
 
-  let queryString = `
-  SELECT properties.*, avg(property_reviews.rating) as average_rating
-  FROM properties
-  JOIN property_reviews ON properties.id = property_id
-  `;
+  let queryString = `SELECT properties.*, avg(property_reviews.rating) as average_rating
+                    FROM properties
+                    JOIN property_reviews ON properties.id = property_id
+                    `;
 
   const sqlClause = params => params.length > 1 ? 'AND' : 'WHERE';
 
@@ -120,7 +123,7 @@ const getAllProperties = (options, limit = 10) => {
   }
 
   if (options.owner_id) {
-    queryParams.push(`%${options.owner_id}%`);
+    queryParams.push(`${options.owner_id}`);
     queryString += `${sqlClause(queryParams)} owner_id = $${queryParams.length} `;
   }
 
@@ -148,11 +151,10 @@ const getAllProperties = (options, limit = 10) => {
   }
 
   queryParams.push(limit);
-  queryString += `
-  GROUP BY properties.id
-  ORDER BY cost_per_night
-  LIMIT $${queryParams.length};
-  `;
+  queryString += `GROUP BY properties.id
+                  ORDER BY cost_per_night
+                  LIMIT $${queryParams.length};
+                  `;
 
   console.log(queryString, queryParams);
 
@@ -189,6 +191,7 @@ const addProperty = function(property) {
                       owner_id)
                     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
                     RETURNING *;`;
+
   return pool.query(queryString, queryParams).then((res) => {
     console.log('added row: ', res.rows[0]);
     return res.rows[0];
