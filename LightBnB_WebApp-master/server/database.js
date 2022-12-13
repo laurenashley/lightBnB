@@ -20,7 +20,7 @@ const users = require('./json/users.json');
  * @param {String} email The email of the user.
  * @return {Promise<{}>} A promise to the user.
  */
-const getUserWithEmail = function(email) {
+const getUserWithEmail = (email) => {
   return pool
     .query(`SELECT * FROM users WHERE email = $1`, [`${email}`])
     .then((result) => {
@@ -41,7 +41,7 @@ exports.getUserWithEmail = getUserWithEmail;
  * @param {string} id The id of the user.
  * @return {Promise<{}>} A promise to the user.
  */
-const getUserWithId = function(id) {
+const getUserWithId = (id) => {
   return pool
     .query(`SELECT * FROM users WHERE id = $1`, [id])
     .then((result) => {
@@ -58,12 +58,12 @@ exports.getUserWithId = getUserWithId;
  * @param {{name: string, password: string, email: string}} user
  * @return {Promise<{}>} A promise to the user.
  */
-const addUser =  function(user) {
+const addUser = (user) => {
   return pool
     .query(`INSERT INTO users(name, email, password)
       VALUES($1, $2, $3)
       RETURNING *;`,
-      [user.name, user.email, user.password])
+      [`${user.name}`, `${user.email}`, `${user.password}`])
     .then((result) => {
       return result.rows[0];
     })
@@ -80,7 +80,7 @@ exports.addUser = addUser;
  * @param {string} guest_id The id of the user.
  * @return {Promise<[{}]>} A promise to the reservations.
  */
-const getAllReservations = function(guest_id, limit = 10) {
+const getAllReservations = (guest_id, limit = 10) => {
   return pool
     .query(`SELECT reservations.*, properties.*
       FROM reservations
@@ -123,19 +123,19 @@ const getAllProperties = (options, limit = 10) => {
   }
 
   if (options.owner_id) {
-    queryParams.push(`${options.owner_id}`);
+    queryParams.push(options.owner_id);
     queryString += `${sqlClause(queryParams)} owner_id = $${queryParams.length} `;
   }
 
   if (options.minimum_price_per_night) {
     const minPrice = dollarsToCents(options.minimum_price_per_night);
-    queryParams.push(`${minPrice}`);
+    queryParams.push(minPrice);
     queryString += `${sqlClause(queryParams)} cost_per_night >= $${queryParams.length} `;
   }
 
   if (options.maximum_price_per_night) {
     const maxPrice = dollarsToCents(options.maximum_price_per_night);
-    queryParams.push(`${maxPrice}`);
+    queryParams.push(maxPrice);
     // if min price filter also present, use BETWEEN for range
     if (options.minimum_price_per_night) {
       queryString += `${sqlClause(queryParams)} cost_per_night BETWEEN $${queryParams.length - 1} AND $${queryParams.length} `;
@@ -145,8 +145,7 @@ const getAllProperties = (options, limit = 10) => {
   }
 
   if (options.minimum_rating) {
-    queryParams.push(`${options.minimum_rating}`);
-    // To Do are we supposed to use aggregate here for ratings? Doesn't make sense to do so...
+    queryParams.push(options.minimum_rating);
     queryString += `${sqlClause(queryParams)} property_reviews.rating >= $${queryParams.length} `;
   }
 
@@ -170,7 +169,7 @@ exports.getAllProperties = getAllProperties;
  * @param {{}} property An object containing all of the property details.
  * @return {Promise<{}>} A promise to the property.
  */
-const addProperty = function(property) {
+const addProperty = (property) => {
   console.log('properties ', property);
   const queryParams = Object.values(property);
   console.log('params ', queryParams);
