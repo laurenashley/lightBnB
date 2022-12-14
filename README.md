@@ -21,4 +21,7 @@
 !["ERD for database"](erd.drawio.png)
 
 - Connect to `lightbnb` database and run schema in [/migrations](/migrations/)
-- Add data via [/seeds](/seeds/)
+- Seed the database via [/seeds](/seeds/)
+
+### Queries
+Can be found in [/1_queries](/1_queries/)
