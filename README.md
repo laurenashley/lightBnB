@@ -16,3 +16,9 @@
 
 - Install all dependencies (using the `npm install` command).
 - Run the development web server using the `npm run local` command.
+
+## Database and ERD
+!["ERD for database"](erd.drawio.png)
+
+- Connect to `lightbnb` database and run schema in [/migrations](/migrations/)
+- Add data via [/seeds](/seeds/)
