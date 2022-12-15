@@ -2,12 +2,13 @@
  * Connect to database
  */
 const { Pool } = require('pg');
+const env = require('dotenv').config();
 
 const pool = new Pool({
-  user: 'vagrant',
-  password: '123',
-  host: 'localhost',
-  database: 'lightbnb',
+  user: env.DB_USER,
+  password: env.DB_PASSWORD,
+  host: env.DB_HOST,
+  database: env.DB,
 });
 
 const properties = require('./json/properties.json');
