@@ -107,6 +107,7 @@ exports.getAllReservations = getAllReservations;
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 const getAllProperties = (options, limit = 10) => {
+  console.log('env ', process.env.DB);
   const queryParams = [];
 
   let queryString = `SELECT properties.*, avg(property_reviews.rating) as average_rating
