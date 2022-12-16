@@ -2,13 +2,13 @@
  * Connect to database
  */
 const { Pool } = require('pg');
-const env = require('dotenv').config();
+// const .env = require('dotenv').config();
 
 const pool = new Pool({
-  user: env.DB_USER,
-  password: env.DB_PASSWORD,
-  host: env.DB_HOST,
-  database: env.DB,
+  user: 'vagrant',
+  password: '123',
+  host: 'localhost',
+  database: 'lightbnb',
 });
 
 const properties = require('./json/properties.json');
@@ -107,7 +107,6 @@ exports.getAllReservations = getAllReservations;
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 const getAllProperties = (options, limit = 10) => {
-  console.log('env ', process.env.DB);
   const queryParams = [];
 
   let queryString = `SELECT properties.*, avg(property_reviews.rating) as average_rating
