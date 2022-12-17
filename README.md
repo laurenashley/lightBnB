@@ -48,11 +48,15 @@ Can be found in [/database//1_queries](/database//1_queries/)
 │   └── styles
 ├── sass
 └── server
-  ├── apiRoutes.js
-  ├── database.js
-  ├── json
-  ├── server.js
-  └── userRoutes.js
+    ├── database
+    │   ├── connect.js
+    │   ├── properties.js
+    │   ├── reservations.js
+    │   └── user.js
+    ├── json
+    ├── apiRoutes.js
+    ├── server.js
+    └── userRoutes.js
 ```
 
 * `public` contains all of the HTML, CSS, and client side JavaScript. 
