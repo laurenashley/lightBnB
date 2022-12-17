@@ -1,7 +1,7 @@
-module.exports = function(router, database) {
+module.exports = function(router, properties, reservations) {
 
   router.get('/properties', (req, res) => {
-    database.getAllProperties(req.query)
+    properties.getAllProperties(req.query)
     .then(properties => res.send({properties}))
     .catch(e => {
       console.error(e);
@@ -15,7 +15,7 @@ module.exports = function(router, database) {
       res.error("💩");
       return;
     }
-    database.getAllReservations(userId)
+    reservations.getAllReservations(userId)
     .then(reservations => res.send({reservations}))
     .catch(e => {
       console.error(e);
@@ -25,7 +25,7 @@ module.exports = function(router, database) {
 
   router.post('/properties', (req, res) => {
     const userId = req.session.userId;
-    database.addProperty({...req.body, owner_id: userId})
+    properties.addProperty({...req.body, owner_id: userId})
       .then(property => {
         res.send(property);
       })

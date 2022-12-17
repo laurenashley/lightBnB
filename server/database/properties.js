@@ -1,104 +1,4 @@
-/**
- * Connect to database
- */
-require('dotenv').config();
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  user: process.env.BD_USER,
-  password: process.env.BD_PASSWORD,
-  host: process.env.BD_HOST,
-  database: process.env.DATABASE
-});
-
-const properties = require('../json/properties.json');
-const users = require('../json/users.json');
-
-/// Users
-
-/**
- * Get a single user from the database given their email.
- * @param {String} email The email of the user.
- * @return {Promise<{}>} A promise to the user.
- */
-const getUserWithEmail = (email) => {
-  return pool
-    .query(`SELECT * FROM users WHERE email = $1`, [`${email}`])
-    .then((result) => {
-      if (result.rows) {
-        return result.rows[0];
-      } else {
-        return null;
-      }
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-};
-exports.getUserWithEmail = getUserWithEmail;
-
-/**
- * Get a single user from the database given their id.
- * @param {string} id The id of the user.
- * @return {Promise<{}>} A promise to the user.
- */
-const getUserWithId = (id) => {
-  return pool
-    .query(`SELECT * FROM users WHERE id = $1`, [id])
-    .then((result) => {
-      return result.rows[0];
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-};
-exports.getUserWithId = getUserWithId;
-
-/**
- * Add a new user to the database.
- * @param {{name: string, password: string, email: string}} user
- * @return {Promise<{}>} A promise to the user.
- */
-const addUser = (user) => {
-  return pool
-    .query(`INSERT INTO users(name, email, password)
-      VALUES($1, $2, $3)
-      RETURNING *;`,
-      [`${user.name}`, `${user.email}`, `${user.password}`])
-    .then((result) => {
-      return result.rows[0];
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-};
-exports.addUser = addUser;
-
-/// Reservations
-
-/**
- * Get all reservations for a single user.
- * @param {string} guest_id The id of the user.
- * @return {Promise<[{}]>} A promise to the reservations.
- */
-const getAllReservations = (guest_id, limit = 10) => {
-  return pool
-    .query(`SELECT reservations.*, properties.*
-      FROM reservations
-      JOIN properties ON properties.id = reservations.property_id
-      WHERE guest_id = $1
-      LIMIT $2;`,
-      [guest_id, limit])
-    .then((result) => {
-      return result.rows;
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-};
-exports.getAllReservations = getAllReservations;
-
-/// Properties
+const pool = require('./connect').pool;
 
 /**
  * Get all properties.
@@ -114,9 +14,9 @@ const getAllProperties = (options, limit = 10) => {
                     JOIN property_reviews ON properties.id = property_id
                     `;
 
-  const sqlClause = params => params.length > 1 ? 'AND' : 'WHERE';
+  const sqlClause = (params) => params.length > 1 ? 'AND' : 'WHERE';
 
-  const dollarsToCents = dollars => dollars * 100;
+  const dollarsToCents = (dollars) => dollars * 100;
 
   if (options.city) {
     queryParams.push(`%${options.city}%`);
@@ -156,10 +56,11 @@ const getAllProperties = (options, limit = 10) => {
                   LIMIT $${queryParams.length};
                   `;
 
-  return pool.query(queryString, queryParams).then((res) => res.rows)
-  .catch((err) => {
-    console.log(err.message);
-  });
+  return pool.query(queryString, queryParams)
+        .then((res) => res.rows)
+        .catch((err) => {
+          console.log(err.message);
+        });
 };
 exports.getAllProperties = getAllProperties;
 
@@ -170,7 +71,7 @@ exports.getAllProperties = getAllProperties;
  */
 const addProperty = (property) => {
   const queryParams = Object.values(property);
-  let queryString = `INSERT INTO properties(
+  const queryString = `INSERT INTO properties(
                       title,
                       description,
                       number_of_bedrooms,
