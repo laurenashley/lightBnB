@@ -11,8 +11,8 @@ const pool = new Pool({
   database: process.env.DATABASE
 });
 
-const properties = require('./json/properties.json');
-const users = require('./json/users.json');
+const properties = require('../json/properties.json');
+const users = require('../json/users.json');
 
 /// Users
 
@@ -156,8 +156,6 @@ const getAllProperties = (options, limit = 10) => {
                   LIMIT $${queryParams.length};
                   `;
 
-  console.log(queryString, queryParams);
-
   return pool.query(queryString, queryParams).then((res) => res.rows)
   .catch((err) => {
     console.log(err.message);
@@ -171,9 +169,7 @@ exports.getAllProperties = getAllProperties;
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = (property) => {
-  console.log('properties ', property);
   const queryParams = Object.values(property);
-  console.log('params ', queryParams);
   let queryString = `INSERT INTO properties(
                       title,
                       description,
@@ -193,7 +189,6 @@ const addProperty = (property) => {
                     RETURNING *;`;
 
   return pool.query(queryString, queryParams).then((res) => {
-    console.log('added row: ', res.rows[0]);
     return res.rows[0];
   })
   .catch((err) => {
