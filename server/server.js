@@ -4,7 +4,6 @@ const express = require('express');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 
-// const database = require('./database/connect'); TO DO delete this?
 const apiRoutes = require('./apiRoutes');
 const userRoutes = require('./userRoutes');
 
