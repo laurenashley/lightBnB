@@ -30,6 +30,18 @@ Can be found in [/database//1_queries](/database//1_queries/)
 ## Project Structure
 
 ```
+├── database
+│   ├── 1_queries
+│   │   ├── 1_user_login.sql
+│   │   ├── 2_avg_reservation_duration.sql
+│   │   ├── 3_propreties_by_city.sql
+│   │   ├── 4_most_visited_cities.sql
+│   │   └── 5_all_my_reservations.sql
+│   ├── migrations
+│   │   └── 01_schema.sql
+│   └── seeds
+│   │   ├── 01_seeds.sql
+│   │   └── 01_seeds.sql
 ├── public
 │   ├── index.html
 │   ├── javascript
@@ -58,6 +70,7 @@ Can be found in [/database//1_queries](/database//1_queries/)
     └── userRoutes.js
 ```
 
+* `database` contains all of the database table schema and dummy data. 
 * `public` contains all of the HTML, CSS, and client side JavaScript. 
   * `index.html` is the entry point to the application. It's the only html page because this is a single page application.
   * `javascript` contains all of the client side javascript files.
